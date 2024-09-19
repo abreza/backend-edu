@@ -1,54 +1,25 @@
 import * as http from "http";
-import { getTasks, addTask, deleteTask } from "./tasks.js";
+import { routeTasksApis } from "./tasksRoutes.js";
+import { routeUsersApis } from "./usersRoutes.js";
 
 const port = 3000;
 
-const postDataHandler = async (req) => {
-  return new Promise((resolve) => {
-    let body = "";
-    req.on("data", (chunk) => {
-      body += chunk.toString();
-    });
-    req.on("end", async () => {
-      resolve(body);
-    });
-  });
-};
-
 const server = http.createServer(async (req, res) => {
   try {
-    if (req.url === "/add") {
-      if (req.method === "POST") {
-        let body = await postDataHandler(req);
-        const task = JSON.parse(body, (key, value) => {
-          if (key === "deadline") {
-            return new Date(value);
-          }
-          return value;
-        });
-        await addTask(task);
-
-        const tasks = await getTasks();
-        res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(tasks));
-      }
-    } else if (req.url === "/delete") {
-      if (req.method === "DELETE") {
-        let body = await postDataHandler(req);
-        const { id } = JSON.parse(body);
-        await deleteTask(id);
-        res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(newTasks));
-      }
+    if (req.url.startsWith("/tasks")) {
+      req.url = req.url.replace("/users", "");
+      await routeTasksApis(req, res);
+    } else if (req.url.startsWith("/users")) {
+      req.url = req.url.replace("/users", "");
+      await routeUsersApis(req, res);
     } else {
-      const tasks = await getTasks();
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify(tasks));
+      res.statusCode = 404;
+      res.end("Not found!");
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.statusCode = 500;
-    res.end("Server error");
+    res.end("Server error!");
   }
 });
 
