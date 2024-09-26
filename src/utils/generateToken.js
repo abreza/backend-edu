@@ -13,6 +13,16 @@ export const generateToken = (payload) => {
 };
 
 export const getUserByToken = async (token) => {
+  // const jwdData = jwt.decode(token, { complete });
+  // if (!jwdData) {
+  //   throw Error("Token is not valid!");
+  // }
+  // const checkToken = jwt.sign(jwdData.payload, secretKey, jwdData.header);
+  // if(token === checkToken) {
+  //   const user = await getUserByUsername(jwdData.payload.username);
+  //   return user;
+  // }
+
   const payload = jwt.verify(token, secretKey);
   if (!payload) {
     throw Error("Token is not valid!");

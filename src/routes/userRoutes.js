@@ -3,6 +3,7 @@ import {
   createUser,
   loginUser,
   getUserById,
+  forgetPassword,
 } from "./../services/user/user.service.js";
 import { getUserByToken } from "../utils/generateToken.js";
 
@@ -23,6 +24,16 @@ export const userRoutes = async (req, res) => {
         });
         const token = await loginUser(user);
         res.end(JSON.stringify(token));
+      }
+      break;
+    case "/forget-password":
+      if (req.method === "POST") {
+        let body = await postDataHandler(req);
+        const user = JSON.parse(body, (key, value) => {
+          return value;
+        });
+        await forgetPassword(user);
+        res.end("Check your email.");
       }
       break;
     default:
