@@ -7,17 +7,20 @@ const port = 3000;
 const server = http.createServer(async (req, res) => {
   try {
     res.setHeader("Content-Type", "application/json");
-    if (req.url.startWith('/task')) {
-      req.url = req.url.replace('/task', "/");
-      taskRoutes(req, res);
-    } else if (req.url.startWith('/user')) {
-      req.url = req.url.replace('/user', "/");
-      userRoutes(req, res);
+    if (req.url.startsWith("/tasks")) {
+      req.url = req.url.replace("/users", "");
+      await taskRoutes(req, res);
+    } else if (req.url.startsWith("/users")) {
+      req.url = req.url.replace("/users", "");
+      await userRoutes(req, res);
+    } else {
+      res.statusCode = 404;
+      res.end("Not found!");
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.statusCode = 500;
-    res.end("Server error");
+    res.end("Server error!");
   }
 });
 

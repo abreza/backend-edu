@@ -1,4 +1,4 @@
-import { getTasks, addTask, deleteTask } from "./src/services/task/task.service.js";
+import { getTasks, addTask, deleteTask } from "../services/task/taskService.js";
 import { postDataHandler } from './../utils/postDataHandler.js'
 
 export const taskRoutes = async (req, res) => {
