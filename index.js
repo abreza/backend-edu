@@ -8,7 +8,7 @@ const server = http.createServer(async (req, res) => {
   try {
     res.setHeader("Content-Type", "application/json");
     if (req.url.startsWith("/tasks")) {
-      req.url = req.url.replace("/users", "");
+      req.url = req.url.replace("/tasks", "");
       await taskRoutes(req, res);
     } else if (req.url.startsWith("/users")) {
       req.url = req.url.replace("/users", "");
