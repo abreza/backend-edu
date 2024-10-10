@@ -1,6 +1,6 @@
 import * as http from "http";
-import { userRoutes } from './src/routes/userRoutes.js'
-import { taskRoutes } from './src/routes/taskRoutes.js'
+import { userRoutes } from "./src/routes/user.routes.js";
+import { taskRoutes } from "./src/routes/task.routes.js";
 
 const port = 3000;
 

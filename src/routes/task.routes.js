@@ -3,8 +3,8 @@ import {
   getMyTasks,
   addTask,
   deleteTask,
-} from "../services/task/taskService.js";
-import { postDataHandler } from "./../utils/postDataHandler.js";
+} from "../services/task/task.service.js";
+import { postDataHandler } from "../utils/postDataHandler.js";
 import { getUserByToken } from "../utils/generateToken.js";
 
 export const taskRoutes = async (req, res) => {
