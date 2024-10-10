@@ -8,6 +8,8 @@ import {
   forgetPassword,
 } from "../services/user/user.service.js";
 import { getUserByToken } from "../utils/generateToken.js";
+import path from "path";
+import { promises as fsPromises } from "fs";
 
 export const userRoutes = async (req, res) => {
   switch (req.url) {
@@ -108,6 +110,52 @@ export const userRoutes = async (req, res) => {
           // Success response
           res.statusCode = 200;
           res.end(JSON.stringify({ message: "Password reset successfully" }));
+        } catch (err) {
+          // Error handling: send error details back
+          res.statusCode = 500; // Internal Server Error
+          console.error("Error during forget password process:", err); // Log error server-side
+
+          // Send a user-friendly message to the client
+          res.end(
+            JSON.stringify({
+              error: err.message || "An unknown error occurred",
+            })
+          );
+        }
+      }
+      break;
+    case "/upload":
+      if (req.method === "POST") {
+        try {
+          const token = req.headers.authorization.replace("Bearer ", ""); // .split(" ")[1];
+          const me = await getUserByToken(token);
+
+          if (!token) {
+            res.statusCode = 403; // Bad Request
+            return res.end(JSON.stringify({ error: "Access denied" }));
+          }
+          if (!me) {
+            res.statusCode = 400; // Bad Request
+            return res.end(JSON.stringify({ error: "User does not exist" }));
+          }
+
+          const filePath = path.join(__dirname, "../../uploads"); // Path where file will be stored
+          const writeStream = fsPromises.createWriteStream(filePath);
+
+          req.on("data", (chunk) => {
+            writeStream.write(chunk);
+          });
+
+          req.on("end", () => {
+            writeStream.end();
+          });
+
+          // Attempt to reset password
+          await uploadFile(me, file);
+
+          // Success response
+          res.statusCode = 200;
+          res.end(JSON.stringify({ message: "File successfully uploaded" }));
         } catch (err) {
           // Error handling: send error details back
           res.statusCode = 500; // Internal Server Error

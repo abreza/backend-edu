@@ -1,19 +1,8 @@
-import { promises as fsPromises } from "fs";
 import * as uuid from "uuid";
 import * as bcrypt from "bcrypt";
 import { generateToken } from "./../../utils/generateToken.js";
 import nodemailer from "nodemailer";
-
-const userFilePath = "data/users.data.json";
-
-// Helper function to ensure the data directory and file exist
-const ensureFileExists = async () => {
-  try {
-    await fsPromises.access(userFilePath);
-  } catch {
-    await fsPromises.writeFile(userFilePath, "[]");
-  }
-};
+import { getUsers } from "./general.services.js";
 
 // Helper function to validate reset code
 const validateResetCode = (user, resetCode) => {
@@ -28,13 +17,6 @@ const validateResetCode = (user, resetCode) => {
 const hashPasswordHandler = async (nonHashedPassword) => {
   const hashedPassword = await bcrypt.hash(nonHashedPassword, 10);
   return hashedPassword;
-};
-
-// Retrieve users from the data file
-export const getUsers = async () => {
-  await ensureFileExists();
-  const usersData = await fsPromises.readFile(userFilePath, "utf8");
-  return JSON.parse(usersData);
 };
 
 // Check if a user exists based on the username
